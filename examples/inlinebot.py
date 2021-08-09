@@ -14,6 +14,8 @@ bot.
 """
 import logging
 from uuid import uuid4
+import os
+PORT = int(os.environ.get('PORT', 5000))
 
 from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageContent, Update
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext
@@ -25,6 +27,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+TOKEN = '1922095403:AAHU78Bg6jGc8cl7Cy586r0fKkqvC8ePNko'
 
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -74,7 +77,7 @@ def inlinequery(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     """Run the bot."""
     # Create the Updater and pass it your bot's token.
-    updater = Updater("TOKEN")
+    updater = Updater(TOKEN, use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
@@ -87,7 +90,13 @@ def main() -> None:
     dispatcher.add_handler(InlineQueryHandler(inlinequery))
 
     # Start the Bot
-    updater.start_polling()
+    updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=TOKEN)
+    updater.bot.setWebhook('https://botbdpu.herokuapp.com/' + TOKEN)
+
+    
+    #updater.start_polling()
 
     # Block until the user presses Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
